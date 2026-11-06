@@ -1,6 +1,7 @@
 {
-  "name": "Jack Manuais",
-  "short_name": "Jack",
+  "name": "Grupo MACL",
+  "short_name": "MACL",
+  "description": "Manuais, agulhas e afinação das máquinas de costura, por marca.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -8,7 +9,8 @@
   "background_color": "#030b17",
   "theme_color": "#030b17",
   "icons": [
-    { "src": "logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "logo.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }
