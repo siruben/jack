@@ -90,8 +90,9 @@ body.hubtab .top .mark{visibility:hidden}
 .bt{position:relative;display:grid;gap:4px;text-align:left;padding:12px;border-radius:8px;background:linear-gradient(160deg,rgba(var(--rgb),.12),rgba(7,26,46,.88));
   border:1px solid color-mix(in srgb,var(--c) 55%,transparent);box-shadow:0 0 16px color-mix(in srgb,var(--c) 25%,transparent);transition:transform .12s}
 .bt:active{transform:scale(.97)}
-.bt .lg{aspect-ratio:1/1;border-radius:8px;display:grid;place-items:center;background:rgba(2,8,18,.65);overflow:hidden;margin-bottom:6px}
-.bt .lg img{width:78%;height:78%;object-fit:contain}
+.bt .lg{aspect-ratio:1/1;border-radius:8px;display:grid;place-items:center;overflow:hidden;margin-bottom:6px}
+.bt .lg:has(span){background:rgba(2,8,18,.65)}
+.bt .lg img{width:100%;height:100%;object-fit:contain;border-radius:14%}
 .bt .lg span{font:800 42px var(--f-display);color:var(--c)}
 .bt b{font:800 15px/1.1 var(--f-display);letter-spacing:.1em;color:#fff;text-transform:uppercase}
 .bt small{font:600 12px var(--f-cond);letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
@@ -513,6 +514,13 @@ $("#bImp").onchange=async e=>{
 
 /* dados iniciais */
 const JACK={id:"jack",name:"Jack",color:"#08a5e3",src:"logo.png"};
+const BRANDS0=[JACK,
+ {id:"kingtex",name:"Kingtex",color:"#29abe2",src:"brands/kingtex.png"},
+ {id:"yamato",name:"Yamato",color:"#2cb34a",src:"brands/yamato.png"},
+ {id:"brother",name:"Brother",color:"#0f6fc6",src:"brands/brother.png"},
+ {id:"pegasus",name:"Pegasus",color:"#f03a3f",src:"brands/pegasus.png"},
+ {id:"juki",name:"Juki",color:"#0a86d6",src:"brands/juki.png"},
+ {id:"bruce",name:"Bruce",color:"#e8434a",src:"brands/bruce.png"}];
 const SRC="Fonte: Welttec (lâmina técnica). Confirmar no manual.";
 const SEED=[
  {id:"s-f5-f6",model:"Jack F5 / F6",type:"Ponto corrido",notes:"Modelos mecânicos de entrada com motor direct-drive integrado e controlo de velocidade."},
@@ -530,7 +538,11 @@ const SEED=[
 async function init(){
  db=await open();machines=await all();
  brands=await kget("brands");
- if(!brands){brands=[JACK];await saveBrands()}
+ if(!brands)brands=[];
+ if((await kget("brandsv"))!==1){ // marcas do grupo; só se acrescentam uma vez, para poderes apagar as que não queres
+  for(const d of BRANDS0)if(!brands.some(b=>b.id===d.id))brands.push(d);
+  await saveBrands();await kset("brandsv",1);
+ }
  // fichas antigas (anteriores às marcas) passam para a Jack
  for(const m of machines)if(!m.brand){m.brand="jack";await put(m)}
  if((await kget("seedv"))!==3){
