@@ -248,7 +248,7 @@ body::before,.sheet::before{
   <label class="drop" id="dropImg"><span id="dropImgT">📷 Foto da máquina</span><input type="file" id="fImg" accept="image/*"></label>
   <label class="f" for="fModel">Modelo</label><input class="f-in" id="fModel" placeholder="Ex.: Jack A4">
   <label class="f" for="fType">Tipo</label>
-  <select class="f-in" id="fType"><option>Ponto reto (1 agulha)</option><option>Ponto reto (2 agulhas)</option><option>Overlock</option><option>Corte e cose</option><option>Ponto corrente</option><option>Caseadeira</option><option>Botoeira / Pregar botões</option><option>Zigue-zague</option><option>Travete</option><option>Outro</option></select>
+  <select class="f-in" id="fType"><option>Ponto corrido</option><option>Corta-e-cose</option><option>Overlock</option><option>Ponto corrente</option><option>Caseadeira</option><option>Botoeira / Pregar botões</option><option>Zigue-zague</option><option>Travete</option><option>Outro</option></select>
   <label class="f">Manual (PDF)</label>
   <label class="drop" id="dropPdf"><span id="dropPdfT">📖 Anexar manual PDF</span><input type="file" id="fPdf" accept="application/pdf"></label>
   <label class="f" for="fNeedle">Agulhas <small style="text-transform:none;letter-spacing:0">(uma por linha; a 1.ª aparece no cartão)</small></label>
@@ -327,7 +327,7 @@ function card(m){
   <div class="ph" style="${m.img?`background-image:url(${url(m.img)})`:""}">${m.img?"":ic("mach")}</div>
   ${m.pdf?'<span class="pdfb">PDF</span>':""}
   <button class="star ${m.fav?"on":""}" data-fav="${m.id}" aria-label="Favorita">${ic("star")}</button>
-  <div class="tx"><b>${esc(m.model)}</b><small>${esc(m.type)}</small>${first?`<em>🪡 ${esc(first)}</em>`:""}</div></div>`}
+  <div class="tx"><b>${esc(m.model)}</b><small>${esc(m.type)}</small>${first?`<em>🪡 ${esc(first)}</em>`:((m.notes||"").trim()?`<em>${esc((m.notes||"").trim().split("\n")[0])}</em>`:"")}</div></div>`}
 function emptyBox(msg,btn){return `<div class="empty" style="grid-column:1/-1">${ic("mach")}<p>${msg}</p>${btn?'<button class="btn" id="eAdd">'+ic("plus")+' Adicionar máquina</button>':""}</div>`}
 function render(){
  const types=["Todas",...new Set(machines.map(m=>m.type))];
@@ -335,7 +335,7 @@ function render(){
  $("#chips").innerHTML=types.map(t=>`<button class="chip ${t===filter?"on":""}" data-chip="${esc(t)}">${esc(t)}</button>`).join("");
  const t=$("#q").value.toLowerCase().trim();
  const srt=(a,b)=>a.model.localeCompare(b.model,"pt",{numeric:true});
- const list=machines.filter(m=>(filter==="Todas"||m.type===filter)&&(m.model+" "+m.type+" "+(m.needle||"")).toLowerCase().includes(t)).sort(srt);
+ const list=machines.filter(m=>(filter==="Todas"||m.type===filter)&&(m.model+" "+m.type+" "+(m.needle||"")+" "+(m.notes||"")).toLowerCase().includes(t)).sort(srt);
  $("#count").textContent=machines.length+" máquina"+(machines.length==1?"":"s");
  $("#grid").innerHTML=list.length?list.map(card).join(""):emptyBox(machines.length?"Nada encontrado.":"Ainda não há máquinas. Adiciona a primeira!",!machines.length);
  const fav=machines.filter(m=>m.fav).sort(srt);
@@ -371,7 +371,7 @@ function drawDetail(){
 }
 $$(".seg button").forEach(b=>b.onclick=()=>{seg=b.dataset.s;drawDetail()});
 function openDetail(id){cur=machines.find(m=>m.id===id);if(!cur)return;
- seg=(cur.needle||"").trim()?"needle":(cur.tune||"").trim()?"tune":"needle";drawDetail();$("#detail").scrollTop=0;openSheet("#detail")}
+ seg=(cur.needle||"").trim()?"needle":(cur.tune||"").trim()?"tune":(cur.notes||"").trim()?"notes":"needle";drawDetail();$("#detail").scrollTop=0;openSheet("#detail")}
 $("#dFav").onclick=async()=>{cur.fav=!cur.fav;await put(cur);drawDetail();render()};
 $("#dEdit").onclick=()=>openForm(cur);
 
@@ -380,6 +380,7 @@ let editing=null;
 function setDrop(id,tid,has,txt,img){const d=$(id);d.classList.toggle("has",!!has);$(tid).textContent=txt;d.style.backgroundImage=img?`url(${img})`:""}
 function openForm(m){
  editing=m||null;$("#fTitle").textContent=m?"Editar máquina":"Nova máquina";
+ if(m&&![...$("#fType").options].some(o=>o.value===m.type)){const o=document.createElement("option");o.textContent=m.type;$("#fType").add(o)}
  $("#fModel").value=m?.model||"";$("#fType").value=m?.type||$("#fType").options[0].value;
  $("#fNeedle").value=m?.needle||"";$("#fTune").value=m?.tune||"";$("#fNotes").value=m?.notes||"";
  $("#fImg").value="";$("#fPdf").value="";
@@ -426,11 +427,26 @@ $("#bImp").onchange=async e=>{
  catch(_){toast("Ficheiro inválido")}
 };
 
+const SEED=[
+ {id:"s-f5-f6",model:"Jack F5 / F6",type:"Ponto corrido",notes:"Modelos mecânicos de entrada com motor direct-drive integrado e controlo de velocidade."},
+ {id:"s-a2s-a2b",model:"Jack A2S / A2B",type:"Ponto corrido",notes:"Máquinas eletrónicas básicas com corte de linha automático."},
+ {id:"s-a4f-a4e",model:"Jack A4F / A4E",type:"Ponto corrido",notes:"Modelos eletrónicos intermédios com corte de linha, retrocesso automático e cárter fechado."},
+ {id:"s-a5e",model:"Jack A5E / A5E-A",type:"Ponto corrido",notes:"Máquinas eletrónicas com chip de inteligência artificial que adapta o ponto a tecidos leves ou pesados."},
+ {id:"s-a7",model:"Jack A7",type:"Ponto corrido",notes:"Modelo topo de gama com transporte digital inteligente e cárter blindado anti-manchas."},
+ {id:"s-h2-h5-h6",model:"Jack H2 / H5 / H6",type:"Ponto corrido",notes:"Modelos de duplo/triplo arraste para materiais pesados (peles, estofos e lonas)."},
+ {id:"s-e4s",model:"Jack E4S",type:"Corta-e-cose",notes:"Modelo mecânico de entrada com ajuste manual para tecidos leves, médios ou pesados."},
+ {id:"s-c2",model:"Jack C2",type:"Corta-e-cose",notes:"Máquina eletrónica básica com levantamento de calcador automático e corte de linha."},
+ {id:"s-c4",model:"Jack C4",type:"Corta-e-cose",notes:"Modelo eletrónico com sensores automáticos, corte por sucção e modos manual/semi-automático/automático."},
+ {id:"s-c5s-c6",model:"Jack C5S / C6",type:"Corta-e-cose",notes:"Modelos de alta velocidade com controlo digital da altura do calcador e sistema anti-quebra de agulhas."},
+ {id:"s-c7",model:"Jack C7",type:"Corta-e-cose",notes:"Série premium de alta velocidade (até 8000 rpm) com guia de alimentação motorizado para elásticos."}
+];
 async function init(){
  db=await open();machines=await all();
- if(!machines.length&&!(await kget("seeded"))){
-  await put({id:"ex1",model:"Jack A4 (exemplo)",type:"Ponto reto (1 agulha)",needle:"Sistema DB×1 — confirmar tamanho no manual",tune:"Exemplo: edita esta ficha com os teus dados reais.",notes:""});
-  await kset("seeded",1);machines=await all();
+ if((await kget("seedv"))!==2){
+  const ids=new Set(machines.map(m=>m.id)),ex=machines.find(m=>m.id==="ex1");
+  if(ex&&!ex.pdf&&!ex.img)await del("ex1");
+  for(const m of SEED)if(!ids.has(m.id))await put(m);
+  await kset("seedv",2);await kset("seeded",1);machines=await all();
  }
  render();setCover();setTab("home");
 }
