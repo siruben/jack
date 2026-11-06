@@ -2,10 +2,13 @@
   "name": "Jack Manuais",
   "short_name": "Jack",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#08a5e3",
-  "theme_color": "#08a5e3",
+  "orientation": "any",
+  "background_color": "#02040f",
+  "theme_color": "#02040f",
   "icons": [
-    { "src": "logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+    { "src": "logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "logo.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }
