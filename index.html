@@ -26,7 +26,8 @@
   color-scheme:dark}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 [hidden]{display:none!important}
-html,body{height:100%}
+html,body{height:100%;max-width:100%}
+html{overflow-x:hidden;overscroll-behavior-x:none}
 body{margin:0;background:var(--bg);color:var(--fg);font:500 16px/1.4 var(--f-body);overflow:hidden;
   padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right))}
 body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
@@ -62,7 +63,7 @@ svg.i.fill{fill:currentColor;stroke:none}
 .chip{flex:none;height:34px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:rgba(11,20,56,.7);color:var(--mute);font:700 13px var(--f-cond);letter-spacing:.1em;text-transform:uppercase}
 .chip.on{color:#02040f;background:linear-gradient(100deg,var(--cyan),var(--blue));border-color:transparent;box-shadow:0 0 14px rgba(47,168,255,.55)}
 
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,160px),1fr));gap:12px}
 .mc{position:relative;display:block;text-align:left;border-radius:18px;overflow:hidden;background:linear-gradient(160deg,rgba(33,80,255,.28),rgba(11,20,56,.85));
   border:1px solid color-mix(in srgb,var(--c) 55%,transparent);box-shadow:0 0 14px color-mix(in srgb,var(--c) 28%,transparent);transition:transform .12s}
 .mc:active{transform:scale(.97)}
