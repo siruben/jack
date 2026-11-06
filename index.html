@@ -427,26 +427,34 @@ $("#bImp").onchange=async e=>{
  catch(_){toast("Ficheiro inválido")}
 };
 
+const SRC="Fonte: Welttec (lâmina técnica). Confirmar no manual.";
 const SEED=[
  {id:"s-f5-f6",model:"Jack F5 / F6",type:"Ponto corrido",notes:"Modelos mecânicos de entrada com motor direct-drive integrado e controlo de velocidade."},
  {id:"s-a2s-a2b",model:"Jack A2S / A2B",type:"Ponto corrido",notes:"Máquinas eletrónicas básicas com corte de linha automático."},
- {id:"s-a4f-a4e",model:"Jack A4F / A4E",type:"Ponto corrido",notes:"Modelos eletrónicos intermédios com corte de linha, retrocesso automático e cárter fechado."},
- {id:"s-a5e",model:"Jack A5E / A5E-A",type:"Ponto corrido",notes:"Máquinas eletrónicas com chip de inteligência artificial que adapta o ponto a tecidos leves ou pesados."},
- {id:"s-a7",model:"Jack A7",type:"Ponto corrido",notes:"Modelo topo de gama com transporte digital inteligente e cárter blindado anti-manchas."},
- {id:"s-h2-h5-h6",model:"Jack H2 / H5 / H6",type:"Ponto corrido",notes:"Modelos de duplo/triplo arraste para materiais pesados (peles, estofos e lonas)."},
- {id:"s-e4s",model:"Jack E4S",type:"Corta-e-cose",notes:"Modelo mecânico de entrada com ajuste manual para tecidos leves, médios ou pesados."},
+ {id:"s-a4f-a4e",model:"Jack A4F / A4E",type:"Ponto corrido",needle:"A4F: DB×1, nº 11 a 18",notes:"Modelos eletrónicos intermédios com corte de linha, retrocesso automático e cárter fechado.\nVelocidade de trabalho: 5.000 rpm.\nA4E: agulha por confirmar (a lâmina técnica é ambígua).\n"+SRC},
+ {id:"s-a5e",model:"Jack A5E / A5E-A",type:"Ponto corrido",needle:"DB×1, nº 11 a 18",notes:"Máquinas eletrónicas com chip de inteligência artificial que adapta o ponto a tecidos leves ou pesados.\nVelocidade de trabalho: 5.000 rpm.\n"+SRC},
+ {id:"s-a7",model:"Jack A7",type:"Ponto corrido",notes:"Modelo topo de gama com transporte digital inteligente e cárter blindado anti-manchas.\nVelocidade de trabalho: 5.000 rpm.\nFonte: Welttec."},
+ {id:"s-h2-h5-h6",model:"Jack H2 / H5 / H6",type:"Ponto corrido",needle:"H5: DP×17, nº 20 a 23",notes:"Modelos de duplo/triplo arraste para materiais pesados (peles, estofos e lonas).\nVelocidade de trabalho (H5): 2.000 rpm.\n"+SRC},
+ {id:"s-e4s",model:"Jack E4S",type:"Corta-e-cose",needle:"DC×27, nº 9, 11, 14 ou 19 (conforme a versão)",notes:"Modelo mecânico de entrada com ajuste manual para tecidos leves, médios ou pesados.\nVelocidade de trabalho: 6.500 rpm.\n"+SRC},
  {id:"s-c2",model:"Jack C2",type:"Corta-e-cose",notes:"Máquina eletrónica básica com levantamento de calcador automático e corte de linha."},
  {id:"s-c4",model:"Jack C4",type:"Corta-e-cose",notes:"Modelo eletrónico com sensores automáticos, corte por sucção e modos manual/semi-automático/automático."},
  {id:"s-c5s-c6",model:"Jack C5S / C6",type:"Corta-e-cose",notes:"Modelos de alta velocidade com controlo digital da altura do calcador e sistema anti-quebra de agulhas."},
- {id:"s-c7",model:"Jack C7",type:"Corta-e-cose",notes:"Série premium de alta velocidade (até 8000 rpm) com guia de alimentação motorizado para elásticos."}
+ {id:"s-c7",model:"Jack C7",type:"Corta-e-cose",notes:"Série premium de alta velocidade (até 8000 rpm) com guia de alimentação motorizado para elásticos.\nVelocidade segundo a Welttec: até 7.000 rpm.\nFonte: Welttec."}
 ];
 async function init(){
  db=await open();machines=await all();
- if((await kget("seedv"))!==2){
-  const ids=new Set(machines.map(m=>m.id)),ex=machines.find(m=>m.id==="ex1");
+ if((await kget("seedv"))!==3){
+  const by=new Map(machines.map(m=>[m.id,m])),ex=by.get("ex1");
   if(ex&&!ex.pdf&&!ex.img)await del("ex1");
-  for(const m of SEED)if(!ids.has(m.id))await put(m);
-  await kset("seedv",2);await kset("seeded",1);machines=await all();
+  for(const sd of SEED){
+   const m=by.get(sd.id);
+   if(!m){await put(sd);continue}
+   let ch=false;
+   if(!m.needle&&sd.needle){m.needle=sd.needle;ch=true}
+   if(m.notes===sd.notes.split("\n")[0]&&sd.notes!==m.notes){m.notes=sd.notes;ch=true}
+   if(ch)await put(m);
+  }
+  await kset("seedv",3);await kset("seeded",1);machines=await all();
  }
  render();setCover();setTab("home");
 }
