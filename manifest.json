@@ -1,0 +1,11 @@
+{
+  "name": "Jack Manuais",
+  "short_name": "Jack",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#08a5e3",
+  "theme_color": "#08a5e3",
+  "icons": [
+    { "src": "logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

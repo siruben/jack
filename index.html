@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#08a5e3">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="icon" href="logo.png">
+<link rel="apple-touch-icon" href="logo.png">
+<link rel="manifest" href="manifest.json">
+<title>Jack Manuais</title>
+<style>
+:root{--bg:#f4f4f2;--card:#fff;--ink:#1c1c1e;--mut:#6b6b70;--acc:#08a5e3;--line:#e3e3e0;--r:16px}
+@media(prefers-color-scheme:dark){:root{--bg:#121214;--card:#1e1e21;--ink:#f2f2f3;--mut:#9a9aa0;--line:#2c2c30}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);padding-bottom:env(safe-area-inset-bottom)}
+header{position:relative;height:200px;background:#222 center/cover no-repeat;display:flex;align-items:flex-end}
+header::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 30%,rgba(0,0,0,.75))}
+header .t{position:relative;z-index:1;padding:16px;color:#fff}
+header h1{margin:0;font-size:26px}
+header p{margin:2px 0 0;opacity:.85;font-size:14px}
+.gear{position:absolute;top:calc(10px + env(safe-area-inset-top));right:12px;z-index:2;background:rgba(0,0,0,.45);color:#fff;border:0;border-radius:50%;width:42px;height:42px;font-size:20px}
+.bar{display:flex;gap:8px;padding:12px;position:sticky;top:0;background:var(--bg);z-index:5}
+.bar input{flex:1;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:16px}
+.btn{background:var(--acc);color:#fff;border:0;border-radius:12px;padding:12px 16px;font-size:15px;font-weight:600}
+.btn.alt{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.btn.danger{background:transparent;color:var(--acc);border:1px solid var(--acc)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;padding:0 12px 24px}
+.card{background:var(--card);border-radius:var(--r);overflow:hidden;border:1px solid var(--line);cursor:pointer}
+.card:active{transform:scale(.98)}
+.card .im{aspect-ratio:4/3;background:#ddd center/cover no-repeat;display:flex;align-items:center;justify-content:center;font-size:40px;color:#999}
+.card .tx{padding:10px 12px}
+.card b{display:block}
+.card small{color:var(--mut)}
+.empty{text-align:center;color:var(--mut);padding:40px 20px}
+.sheet{position:fixed;inset:0;background:var(--bg);z-index:20;overflow:auto;display:none}
+.sheet.on{display:block}
+.top{display:flex;align-items:center;gap:8px;padding:12px;padding-top:calc(12px + env(safe-area-inset-top));position:sticky;top:0;background:var(--bg);z-index:2;border-bottom:1px solid var(--line)}
+.top h2{flex:1;margin:0;font-size:18px}
+.hero{width:100%;max-height:260px;object-fit:cover;display:block;background:#ddd}
+.body{padding:14px;max-width:720px;margin:auto}
+.pdfbtn{width:100%;font-size:18px;padding:16px;margin:4px 0 14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:12px}
+.box h3{margin:0 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut)}
+.box p{margin:0;white-space:pre-wrap}
+label{display:block;font-size:13px;color:var(--mut);margin:12px 0 4px}
+input[type=text],textarea,select{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit}
+textarea{min-height:90px}
+.row{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+.row .btn{flex:1}
+#viewer{background:#000;z-index:30}
+#viewer iframe{width:100%;height:calc(100% - 58px - env(safe-area-inset-top));border:0;background:#fff}
+#viewer .top{background:#111;color:#fff;border:0}
+.note{font-size:13px;color:var(--mut);margin-top:6px}
+</style>
+</head>
+<body>
+<header id="cover"><button class="gear" id="bGear" aria-label="Definições">⚙</button>
+<div class="t"><h1>Jack · Manuais</h1><p id="count"></p></div></header>
+<div class="bar"><input id="q" type="search" placeholder="Pesquisar modelo ou tipo…"><button class="btn" id="bAdd">+ Máquina</button></div>
+<main class="grid" id="grid"></main>
+
+<!-- detalhe -->
+<section class="sheet" id="detail"><div class="top"><button class="btn alt" data-close>← Voltar</button><h2 id="dTitle"></h2><button class="btn alt" id="bEdit">Editar</button></div>
+<img class="hero" id="dImg" alt=""><div class="body" id="dBody"></div></section>
+
+<!-- formulário -->
+<section class="sheet" id="form"><div class="top"><button class="btn alt" data-close>Cancelar</button><h2 id="fTitle">Máquina</h2></div>
+<div class="body">
+<label>Modelo</label><input type="text" id="fModel" placeholder="Ex.: Jack A4">
+<label>Tipo</label><select id="fType"><option>Ponto reto (1 agulha)</option><option>Ponto reto (2 agulhas)</option><option>Overlock</option><option>Corte e cose</option><option>Ponto corrente</option><option>Caseadeira</option><option>Botoeira / Pregar botões</option><option>Zigue-zague</option><option>Travete</option><option>Outro</option></select>
+<label>Foto da máquina</label><input type="file" id="fImg" accept="image/*">
+<label>Manual (PDF)</label><input type="file" id="fPdf" accept="application/pdf"><div class="note" id="fPdfNote"></div>
+<label>Agulhas (sistema, tamanhos)</label><textarea id="fNeedle" placeholder="Ex.: Sistema DB×1, nº 11 a 18"></textarea>
+<label>Resumo de afinação</label><textarea id="fTune" placeholder="Tensões, pé calcador, altura da barra, dentes, timing…"></textarea>
+<label>Notas extra</label><textarea id="fNotes" placeholder="Óleo, peças, contactos, erros comuns…"></textarea>
+<div class="row"><button class="btn" id="fSave">Guardar</button><button class="btn danger" id="fDel">Apagar</button></div>
+</div></section>
+
+<!-- definições -->
+<section class="sheet" id="set"><div class="top"><button class="btn alt" data-close>← Voltar</button><h2>Definições</h2></div>
+<div class="body">
+<div class="box"><h3>Imagem de capa / ícone</h3><input type="file" id="sCover" accept="image/*"><div class="row"><button class="btn danger" id="sCoverDel">Remover capa</button></div></div>
+<div class="box"><h3>Cópia de segurança</h3><p>Guarda tudo (fotos, PDFs, textos) num ficheiro, para passar para outro dispositivo.</p>
+<div class="row"><button class="btn" id="bExp">Exportar</button><button class="btn alt" id="bImpB">Importar</button></div><input type="file" id="bImp" accept=".json" hidden></div>
+<div class="note">Os dados ficam guardados neste dispositivo e funcionam sem internet.</div>
+</div></section>
+
+<!-- leitor PDF -->
+<section class="sheet" id="viewer"><div class="top"><button class="btn alt" data-close>✕ Fechar</button><h2 id="vTitle">Manual</h2><a class="btn alt" id="vOpen" target="_blank" style="text-decoration:none">Abrir ↗</a></div><iframe id="vFrame"></iframe></section>
+
+<script>
+const $=s=>document.querySelector(s);
+let db,machines=[],cur=null,urls=[];
+const open=()=>new Promise((res,rej)=>{const r=indexedDB.open("jackapp",1);
+ r.onupgradeneeded=()=>{r.result.createObjectStore("m",{keyPath:"id"});r.result.createObjectStore("k")};
+ r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
+const tx=(st,mode,fn)=>new Promise((res,rej)=>{const t=db.transaction(st,mode);const o=fn(t.objectStore(st));t.oncomplete=()=>res(o&&o.result);t.onerror=()=>rej(t.error)});
+const all=()=>tx("m","readonly",s=>s.getAll());
+const put=m=>tx("m","readwrite",s=>s.put(m));
+const del=id=>tx("m","readwrite",s=>s.delete(id));
+const kget=k=>tx("k","readonly",s=>s.get(k));
+const kset=(k,v)=>tx("k","readwrite",s=>s.put(v,k));
+const kdel=k=>tx("k","readwrite",s=>s.delete(k));
+const url=b=>{if(!b)return"";const u=URL.createObjectURL(b);urls.push(u);return u};
+const esc=s=>(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+async function init(){
+ db=await open();machines=await all();
+ if(!machines.length&&!(await kget("seeded"))){
+  await put({id:"ex1",model:"Jack A4 (exemplo)",type:"Ponto reto (1 agulha)",needle:"Sistema DB×1 — confirmar tamanho no manual",tune:"Exemplo: edita esta ficha com os teus dados reais.",notes:""});
+  await kset("seeded",1);machines=await all();
+ }
+ render();setCover();
+}
+async function setCover(){
+ const c=await kget("cover"),h=$("#cover").style;
+ if(c){h.backgroundColor="#222";h.backgroundImage=`url(${url(c)})`;h.backgroundSize="cover";h.backgroundPosition="center"}
+ else{h.backgroundColor="#08a5e3";h.backgroundImage="url(logo.png)";h.backgroundSize="auto 120px";h.backgroundPosition="12px 12px"}
+}
+if("serviceWorker"in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js").catch(()=>{});
+function render(){
+ const t=$("#q").value.toLowerCase().trim();
+ const list=machines.filter(m=>(m.model+" "+m.type).toLowerCase().includes(t)).sort((a,b)=>a.model.localeCompare(b.model,"pt",{numeric:true}));
+ $("#count").textContent=machines.length+" máquina"+(machines.length==1?"":"s");
+ $("#grid").innerHTML=list.length?list.map(m=>`<div class="card" data-id="${m.id}"><div class="im" style="${m.img?`background-image:url(${url(m.img)})`:""}">${m.img?"":"🧵"}</div><div class="tx"><b>${esc(m.model)}</b><small>${esc(m.type)}</small></div></div>`).join(""):`<div class="empty" style="grid-column:1/-1">Sem máquinas.<br>Toca em “+ Máquina” para adicionar.</div>`;
+}
+function show(id){$(id).classList.add("on")}
+function hide(el){el.classList.remove("on")}
+document.addEventListener("click",e=>{
+ if(e.target.closest("[data-close]")){const s=e.target.closest(".sheet");if(s.id==="viewer"){$("#vFrame").src="about:blank"}hide(s)}
+ const c=e.target.closest(".card");if(c)openDetail(c.dataset.id);
+});
+$("#q").oninput=render;
+function openDetail(id){
+ cur=machines.find(m=>m.id===id);if(!cur)return;
+ $("#dTitle").textContent=cur.model;
+ $("#dImg").style.display=cur.img?"block":"none";if(cur.img)$("#dImg").src=url(cur.img);
+ const box=(h,t)=>t?`<div class="box"><h3>${h}</h3><p>${esc(t)}</p></div>`:"";
+ $("#dBody").innerHTML=(cur.pdf?`<button class="btn pdfbtn" id="bPdf">📖 Abrir manual (PDF)</button>`:`<div class="box"><p>Sem manual. Toca em Editar para anexar o PDF.</p></div>`)
+  +box("Tipo",cur.type)+box("Agulhas",cur.needle)+box("Resumo de afinação",cur.tune)+box("Notas",cur.notes);
+ const b=$("#bPdf");if(b)b.onclick=()=>{const u=url(cur.pdf);$("#vTitle").textContent=cur.model;$("#vFrame").src=u;$("#vOpen").href=u;show("#viewer")};
+ show("#detail");
+}
+function openForm(m){
+ cur=m||null;$("#fTitle").textContent=m?"Editar máquina":"Nova máquina";
+ $("#fModel").value=m?.model||"";$("#fType").value=m?.type||$("#fType").options[0].value;
+ $("#fNeedle").value=m?.needle||"";$("#fTune").value=m?.tune||"";$("#fNotes").value=m?.notes||"";
+ $("#fImg").value="";$("#fPdf").value="";$("#fPdfNote").textContent=m?.pdf?"PDF já anexado (escolhe outro para substituir)":"";
+ $("#fDel").style.display=m?"block":"none";show("#form");
+}
+$("#bAdd").onclick=()=>openForm();
+$("#bEdit").onclick=()=>{hide($("#detail"));openForm(cur)};
+$("#fSave").onclick=async()=>{
+ const model=$("#fModel").value.trim();if(!model){alert("Indica o modelo.");return}
+ const m=cur?{...cur}:{id:"m"+Date.now()};
+ Object.assign(m,{model,type:$("#fType").value,needle:$("#fNeedle").value,tune:$("#fTune").value,notes:$("#fNotes").value});
+ const i=$("#fImg").files[0],p=$("#fPdf").files[0];if(i)m.img=i;if(p)m.pdf=p;
+ await put(m);machines=await all();hide($("#form"));render();
+};
+$("#fDel").onclick=async()=>{if(cur&&confirm("Apagar "+cur.model+"?")){await del(cur.id);machines=await all();hide($("#form"));render()}};
+$("#bGear").onclick=()=>show("#set");
+$("#sCover").onchange=async e=>{const f=e.target.files[0];if(f){await kset("cover",f);setCover()}};
+$("#sCoverDel").onclick=async()=>{await kdel("cover");setCover()};
+const b64=b=>new Promise(r=>{if(!b)return r(null);const f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(b)});
+const unb64=async d=>d?await (await fetch(d)).blob():undefined;
+$("#bExp").onclick=async()=>{
+ const out={machines:[],cover:await b64(await kget("cover"))};
+ for(const m of machines)out.machines.push({...m,img:await b64(m.img),pdf:await b64(m.pdf)});
+ const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(out)],{type:"application/json"}));a.download="jack-backup.json";a.click();
+};
+$("#bImpB").onclick=()=>$("#bImp").click();
+$("#bImp").onchange=async e=>{
+ const f=e.target.files[0];if(!f)return;const d=JSON.parse(await f.text());
+ for(const m of d.machines)await put({...m,img:await unb64(m.img),pdf:await unb64(m.pdf)});
+ if(d.cover)await kset("cover",await unb64(d.cover));
+ await kset("seeded",1);machines=await all();render();setCover();alert("Importado.");
+};
+init();
+</script>
+</body>
+</html>
