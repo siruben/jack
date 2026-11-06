@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#02040f">
+<meta name="theme-color" content="#030b17">
 <meta name="color-scheme" content="dark">
 <meta name="description" content="Manuais, agulhas e afinação das máquinas de costura Jack.">
 <link rel="manifest" href="manifest.json">
@@ -16,13 +16,14 @@
 <title>Jack Manuais</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Barlow:wght@400;500;600&family=Rajdhani:wght@500;600;700&display=swap">
 <style>
 :root{
-  --bg:#02040f;--panel:#0b1438;--panel2:#101c4d;--line:#1a2d7a;
-  --jack:#08a5e3;--blue:#2fa8ff;--hot:#8ad8ff;--fg:#e8f4ff;--mute:#7f98c9;
-  --cyan:#19f2ff;--pink:#ff3df0;--violet:#a066ff;--lime:#b8ff3a;--amber:#ffb62e;--danger:#ff5d7a;
-  --f-display:"Bungee","Impact",sans-serif;--f-body:"Barlow",system-ui,sans-serif;--f-cond:"Barlow Condensed","Arial Narrow",sans-serif;--f-mono:ui-monospace,"SF Mono",Menlo,monospace;
+  --bg:#030b17;--panel:#071a2e;--panel2:#0a2a47;--line:#0f4a73;
+  --jack:#08a5e3;--blue:#08a5e3;--hot:#7fdcff;--fg:#eaf7ff;--mute:#6f9bb8;
+  /* paleta Jack: só azuis e branco (os nomes antigos apontam para estes tons) */
+  --cyan:#19d3ff;--pink:#08a5e3;--violet:#4cc2f0;--lime:#ffffff;--amber:#ffffff;--danger:#ff6b7f;
+  --f-display:"Orbitron","Eurostile",sans-serif;--f-body:"Barlow",system-ui,sans-serif;--f-cond:"Rajdhani","Arial Narrow",sans-serif;--f-mono:ui-monospace,"SF Mono",Menlo,monospace;
   color-scheme:dark}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 [hidden]{display:none!important}
@@ -150,11 +151,59 @@ textarea.f-in{min-height:96px;resize:vertical}
 
 .toast{position:fixed;left:50%;top:calc(66px + env(safe-area-inset-top));transform:translateX(-50%);z-index:40;padding:10px 16px;border-radius:999px;background:var(--panel2);border:1px solid var(--blue);font:600 14px var(--f-cond);letter-spacing:.06em;box-shadow:0 0 18px rgba(47,168,255,.5);opacity:0;pointer-events:none;transition:opacity .2s;max-width:90vw;text-align:center}
 .toast.show{opacity:1}
+
+/* ===== Tema tecnológico Jack ===== */
+body::before,.sheet::before{
+  background:
+   linear-gradient(rgba(8,165,227,.08) 1px,transparent 1px) 0 0/32px 32px,
+   linear-gradient(90deg,rgba(8,165,227,.08) 1px,transparent 1px) 0 0/32px 32px,
+   radial-gradient(120% 55% at 50% -10%,rgba(8,165,227,.42),transparent 62%),
+   radial-gradient(70% 40% at 100% 100%,rgba(25,211,255,.16),transparent 70%)}
+.brand{font-weight:800;font-size:22px;letter-spacing:.14em;background:linear-gradient(90deg,#fff,var(--jack));-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 8px var(--jack))}
+.top img{border-radius:8px}
+.top small{display:inline-flex;align-items:center;gap:7px;letter-spacing:.2em;font-family:var(--f-mono);font-size:11px;color:var(--hot)}
+.top small i{width:8px;height:8px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan);animation:blip 1.8s ease-in-out infinite}
+.top small.off i{background:var(--mute);box-shadow:none;animation:none}
+@keyframes blip{50%{opacity:.25}}
+.hero,.mc,.dhero,.box,.steps li,.seg,.search,.f-in,.drop{border-radius:8px}
+.hero{border-color:rgba(8,165,227,.55);box-shadow:0 0 26px rgba(8,165,227,.28),inset 0 0 30px rgba(8,165,227,.12)}
+.hero img{border-radius:10px}
+.hero h1{font-size:22px;letter-spacing:.12em;font-weight:800;text-shadow:0 0 16px var(--jack)}
+.hero p,.chip,.tab,.tag,label.f,.box h3,.bar h2,.btn{letter-spacing:.16em}
+.dhero h1{font-size:22px;font-weight:800;letter-spacing:.06em;text-shadow:0 0 16px var(--jack)}
+.mc b{font-size:13px;letter-spacing:.05em;font-weight:600}
+.mc .ph{background-color:var(--panel2)}
+.grid>*{--c:var(--jack)}.grid>:nth-child(even){--c:var(--cyan)}
+.steps li{--c:var(--jack)!important}.steps li:nth-child(even){--c:var(--cyan)!important}
+.steps li i{border-radius:6px;font-weight:700}
+.box h3{color:var(--hot)}
+.chip,.tag,.btn,.seg button{border-radius:6px}
+.chip.on,.seg button[aria-selected=true]{background:linear-gradient(100deg,#7fdcff,var(--jack));color:#02101c}
+.btn{background:linear-gradient(100deg,#7fdcff,var(--jack));color:#02101c;box-shadow:0 0 18px rgba(8,165,227,.6)}
+.btn.ghost{background:transparent;color:var(--hot);box-shadow:none}
+.btn.danger{background:transparent;color:var(--danger);box-shadow:none}
+.tag.p{border-color:var(--hot);color:#fff;box-shadow:0 0 10px rgba(127,220,255,.3)}
+.mc .star.on,.ib.on{color:#fff;filter:drop-shadow(0 0 6px var(--cyan))}
+.fab{border-radius:16px;background:radial-gradient(circle at 35% 30%,#d4f5ff,var(--cyan) 40%,var(--jack) 78%);box-shadow:0 0 0 2px rgba(127,220,255,.45),0 0 22px var(--cyan),0 0 46px rgba(8,165,227,.6);animation:fabp 2.4s ease-in-out infinite}
+@keyframes fabp{50%{box-shadow:0 0 0 2px rgba(127,220,255,.7),0 0 32px var(--cyan),0 0 70px rgba(8,165,227,.8)}}
+.tab[aria-selected=true],.tab[data-t=fav][aria-selected=true],.tab[data-t=set][aria-selected=true]{color:var(--cyan);filter:drop-shadow(0 0 8px var(--cyan));box-shadow:inset 0 2px 0 var(--cyan)}
+.tabs{border-top-color:rgba(8,165,227,.5)}
+.drop.has{border-color:var(--cyan);color:var(--cyan)}
+.toast{border-color:var(--jack);border-radius:8px}
+/* cantos tipo "mira" (HUD) */
+.mc::after,.hero::after,.dhero::before{content:"";position:absolute;inset:7px;pointer-events:none;z-index:2;
+  background:
+   linear-gradient(var(--c,var(--cyan)),var(--c,var(--cyan))) 0 0/14px 2px no-repeat,linear-gradient(var(--c,var(--cyan)),var(--c,var(--cyan))) 0 0/2px 14px no-repeat,
+   linear-gradient(var(--c,var(--cyan)),var(--c,var(--cyan))) 100% 0/14px 2px no-repeat,linear-gradient(var(--c,var(--cyan)),var(--c,var(--cyan))) 100% 0/2px 14px no-repeat,
+   linear-gradient(var(--c,var(--cyan)),var(--c,var(--cyan))) 0 100%/14px 2px no-repeat,linear-gradient(var(--c,var(--cyan)),var(--c,var(--cyan))) 0 100%/2px 14px no-repeat,
+   linear-gradient(var(--c,var(--cyan)),var(--c,var(--cyan))) 100% 100%/14px 2px no-repeat,linear-gradient(var(--c,var(--cyan)),var(--c,var(--cyan))) 100% 100%/2px 14px no-repeat;opacity:.85}
+.mc .star,.mc .pdfb{z-index:3}
+@media(prefers-reduced-motion:reduce){.fab,.top small i{animation:none}}
 </style>
 </head>
 <body>
 <div class="app">
-  <header class="top"><img src="logo.png" alt="Jack"><div class="brand">JACK</div><small>Manuais</small></header>
+  <header class="top"><img src="logo.png" alt="Jack"><div class="brand">JACK</div><small id="net"><i></i><span>Manuais</span></small></header>
   <div class="views">
     <section class="view" id="vHome">
       <div class="hero" id="hero"><img src="logo.png" alt=""><div><h1>MANUAIS</h1><p id="count"></p></div></div>
@@ -386,6 +435,8 @@ async function init(){
  render();setCover();setTab("home");
 }
 if("serviceWorker"in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js").catch(()=>{});
+const net=()=>{const e=$("#net");e.classList.toggle("off",!navigator.onLine);e.querySelector("span").textContent=navigator.onLine?"Manuais · Online":"Manuais · Offline"};
+addEventListener("online",net);addEventListener("offline",net);net();
 init();
 </script>
 </body>
